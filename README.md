@@ -6,6 +6,8 @@ Flutter frontend for [Spring Petclinic](https://github.com/spring-petclinic). Th
 the functional flows of the [Angular frontend](https://github.com/spring-petclinic/spring-petclinic-angular), and uses the same REST backend exposed by 
 [spring-petclinic-rest](https://github.com/spring-petclinic/spring-petclinic-rest).
 
+The CI status includes static analysis, tests, the web build, and the Android debug APK build.
+
 ## Screenshots
 
 ### Web
