@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/link.dart';
 
 import '../navigation/app_routes.dart';
@@ -388,10 +389,8 @@ const _navItems = <_ClassicNavItem>[
 ];
 
 void _navigateTo(BuildContext context, String routeName) {
-  final navigator = Navigator.of(context);
-  final currentRoute = ModalRoute.of(context)?.settings.name;
-  if (currentRoute == routeName) {
+  if (GoRouterState.of(context).uri.path == routeName) {
     return;
   }
-  navigator.pushNamedAndRemoveUntil(routeName, (route) => false);
+  context.go(routeName);
 }

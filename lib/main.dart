@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'features/home/home_screen.dart';
 import 'features/owners/owner_list_screen.dart';
@@ -31,20 +32,38 @@ void main() {
 class PetClinicApp extends StatelessWidget {
   const PetClinicApp({super.key});
 
+  static final _router = GoRouter(
+    routes: [
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.owners,
+        builder: (context, state) => const OwnerListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.petTypes,
+        builder: (context, state) => const PetTypeListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.veterinarians,
+        builder: (context, state) => const VetListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.specialties,
+        builder: (context, state) => const SpecialtyListScreen(),
+      ),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Spring Petclinic',
       debugShowCheckedModeBanner: false,
       theme: ClassicPalette.buildTheme(),
-      initialRoute: AppRoutes.home,
-      routes: {
-        AppRoutes.home: (_) => const HomeScreen(),
-        AppRoutes.owners: (_) => const OwnerListScreen(),
-        AppRoutes.veterinarians: (_) => const VetListScreen(),
-        AppRoutes.petTypes: (_) => const PetTypeListScreen(),
-        AppRoutes.specialties: (_) => const SpecialtyListScreen(),
-      },
+      routerConfig: _router,
     );
   }
 }
