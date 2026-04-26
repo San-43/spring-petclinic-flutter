@@ -22,9 +22,11 @@ import 'specialty.dart';
 import 'specialty_service.dart';
 
 class SpecialtyFormScreen extends StatefulWidget {
-  const SpecialtyFormScreen({super.key, this.specialty});
+  const SpecialtyFormScreen({super.key, this.specialty, this.specialtyId})
+    : assert(specialty == null || specialtyId == null);
 
   final Specialty? specialty;
+  final int? specialtyId;
 
   @override
   State<SpecialtyFormScreen> createState() => _SpecialtyFormScreenState();
@@ -36,20 +38,56 @@ class _SpecialtyFormScreenState extends State<SpecialtyFormScreen> {
   late final TextEditingController _nameController;
 
   bool _isSaving = false;
+  bool _isLoading = false;
   String? _errorMessage;
+  Specialty? _loadedSpecialty;
 
-  bool get _isEditing => widget.specialty != null;
+  Specialty? get _currentSpecialty => widget.specialty ?? _loadedSpecialty;
+  bool get _isEditing => widget.specialty != null || widget.specialtyId != null;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.specialty?.name ?? '');
+    if (widget.specialtyId != null) {
+      _loadSpecialty();
+    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadSpecialty() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final specialty = await _specialtyService.getSpecialty(
+        widget.specialtyId!,
+      );
+      if (!mounted) return;
+
+      setState(() {
+        _loadedSpecialty = specialty;
+        _nameController.text = specialty.name;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = error.toString();
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _save() async {
@@ -63,8 +101,10 @@ class _SpecialtyFormScreenState extends State<SpecialtyFormScreen> {
       _errorMessage = null;
     });
 
+    final currentSpecialty = _currentSpecialty;
+
     final specialty = Specialty(
-      id: widget.specialty?.id,
+      id: currentSpecialty?.id ?? widget.specialtyId,
       name: _nameController.text.trim(),
     );
 
@@ -103,52 +143,75 @@ class _SpecialtyFormScreenState extends State<SpecialtyFormScreen> {
       ),
       body: AppPageWidth(
         maxWidth: 720,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (_errorMessage != null) ...[
-              Card(
-                color: Theme.of(context).colorScheme.errorContainer,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _errorMessage != null &&
+                  widget.specialtyId != null &&
+                  _currentSpecialty == null
+            ? Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Text(_errorMessage!),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Name'),
-                    validator: AppValidators.plainText(
-                      'Name',
-                      minLength: 1,
-                      maxLength: 80,
-                    ),
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(_errorMessage!, textAlign: TextAlign.center),
+                      const SizedBox(height: 12),
+                      FilledButton(
+                        onPressed: _loadSpecialty,
+                        child: const Text('Retry'),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: _isSaving ? null : _save,
-                      icon: _isSaving
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.save_outlined),
-                      label: Text(_isEditing ? 'Update' : 'Save'),
+                ),
+              )
+            : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  if (_errorMessage != null) ...[
+                    Card(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Text(_errorMessage!),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _nameController,
+                          decoration: const InputDecoration(labelText: 'Name'),
+                          validator: AppValidators.plainText(
+                            'Name',
+                            minLength: 1,
+                            maxLength: 80,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton.icon(
+                            onPressed: _isSaving ? null : _save,
+                            icon: _isSaving
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.save_outlined),
+                            label: Text(_isEditing ? 'Update' : 'Save'),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

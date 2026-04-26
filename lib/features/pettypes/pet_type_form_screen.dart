@@ -22,9 +22,11 @@ import 'pet_type.dart';
 import 'pet_type_service.dart';
 
 class PetTypeFormScreen extends StatefulWidget {
-  const PetTypeFormScreen({super.key, this.petType});
+  const PetTypeFormScreen({super.key, this.petType, this.petTypeId})
+    : assert(petType == null || petTypeId == null);
 
   final PetType? petType;
+  final int? petTypeId;
 
   @override
   State<PetTypeFormScreen> createState() => _PetTypeFormScreenState();
@@ -36,20 +38,54 @@ class _PetTypeFormScreenState extends State<PetTypeFormScreen> {
   late final TextEditingController _nameController;
 
   bool _isSaving = false;
+  bool _isLoading = false;
   String? _errorMessage;
+  PetType? _loadedPetType;
 
-  bool get _isEditing => widget.petType != null;
+  PetType? get _currentPetType => widget.petType ?? _loadedPetType;
+  bool get _isEditing => widget.petType != null || widget.petTypeId != null;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.petType?.name ?? '');
+    if (widget.petTypeId != null) {
+      _loadPetType();
+    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadPetType() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final petType = await _petTypeService.getPetType(widget.petTypeId!);
+      if (!mounted) return;
+
+      setState(() {
+        _loadedPetType = petType;
+        _nameController.text = petType.name;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = error.toString();
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _save() async {
@@ -63,8 +99,10 @@ class _PetTypeFormScreenState extends State<PetTypeFormScreen> {
       _errorMessage = null;
     });
 
+    final currentPetType = _currentPetType;
+
     final petType = PetType(
-      id: widget.petType?.id,
+      id: currentPetType?.id ?? widget.petTypeId,
       name: _nameController.text.trim(),
     );
 
@@ -103,52 +141,75 @@ class _PetTypeFormScreenState extends State<PetTypeFormScreen> {
       ),
       body: AppPageWidth(
         maxWidth: 720,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (_errorMessage != null) ...[
-              Card(
-                color: Theme.of(context).colorScheme.errorContainer,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _errorMessage != null &&
+                  widget.petTypeId != null &&
+                  _currentPetType == null
+            ? Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Text(_errorMessage!),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Name'),
-                    validator: AppValidators.plainText(
-                      'Name',
-                      minLength: 1,
-                      maxLength: 80,
-                    ),
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(_errorMessage!, textAlign: TextAlign.center),
+                      const SizedBox(height: 12),
+                      FilledButton(
+                        onPressed: _loadPetType,
+                        child: const Text('Retry'),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: _isSaving ? null : _save,
-                      icon: _isSaving
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.save_outlined),
-                      label: Text(_isEditing ? 'Update' : 'Save'),
+                ),
+              )
+            : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  if (_errorMessage != null) ...[
+                    Card(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Text(_errorMessage!),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _nameController,
+                          decoration: const InputDecoration(labelText: 'Name'),
+                          validator: AppValidators.plainText(
+                            'Name',
+                            minLength: 1,
+                            maxLength: 80,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton.icon(
+                            onPressed: _isSaving ? null : _save,
+                            icon: _isSaving
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.save_outlined),
+                            label: Text(_isEditing ? 'Update' : 'Save'),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
