@@ -22,7 +22,6 @@ import '../../shared/theme/classic_theme.dart';
 import '../../shared/widgets/classic_scaffold.dart';
 import '../../shared/widgets/confirmation_dialog.dart';
 import 'specialty.dart';
-import 'specialty_form_screen.dart';
 import 'specialty_service.dart';
 
 class SpecialtyListScreen extends StatefulWidget {
@@ -76,10 +75,10 @@ class _SpecialtyListScreenState extends State<SpecialtyListScreen> {
   }
 
   Future<void> _openForm({Specialty? specialty}) async {
-    final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        builder: (_) => SpecialtyFormScreen(specialty: specialty),
-      ),
+    final changed = await context.push<bool>(
+      specialty == null
+          ? AppRoutes.specialtyNew
+          : AppRoutes.specialtyEdit(specialty.id!),
     );
     if (changed == true) {
       await _loadSpecialties();

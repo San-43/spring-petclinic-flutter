@@ -22,7 +22,6 @@ import '../../shared/theme/classic_theme.dart';
 import '../../shared/widgets/classic_scaffold.dart';
 import '../../shared/widgets/confirmation_dialog.dart';
 import 'vet.dart';
-import 'vet_form_screen.dart';
 import 'vet_service.dart';
 
 class VetListScreen extends StatefulWidget {
@@ -78,8 +77,8 @@ class _VetListScreenState extends State<VetListScreen> {
   }
 
   Future<void> _openForm({int? vetId}) async {
-    final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(builder: (_) => VetFormScreen(vetId: vetId)),
+    final changed = await context.push<bool>(
+      vetId == null ? AppRoutes.vetNew : AppRoutes.vetEdit(vetId),
     );
     if (changed == true) {
       await _loadVets();

@@ -18,6 +18,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:spring_petclinic_flutter/features/owners/owner_detail_screen.dart';
 import 'package:spring_petclinic_flutter/features/owners/owner_form_screen.dart';
+import 'package:spring_petclinic_flutter/features/pettypes/pet_type_form_screen.dart';
+import 'package:spring_petclinic_flutter/features/specialties/specialty_form_screen.dart';
+import 'package:spring_petclinic_flutter/features/vets/vet_form_screen.dart';
 
 import 'features/home/home_screen.dart';
 import 'features/owners/owner_list_screen.dart';
@@ -47,8 +50,32 @@ class PetClinicApp extends StatelessWidget {
         builder: (context, state) => const OwnerListScreen(),
       ),
       GoRoute(
-        path: '/owners/new',
+        path: AppRoutes.petTypes,
+        builder: (context, state) => const PetTypeListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.veterinarians,
+        builder: (context, state) => const VetListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.specialties,
+        builder: (context, state) => const SpecialtyListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.ownerNew,
         builder: (context, state) => const OwnerFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.vetNew,
+        builder: (context, state) => const VetFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.petTypeNew,
+        builder: (context, state) => const PetTypeFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.specialtyNew,
+        builder: (context, state) => const SpecialtyFormScreen(),
       ),
       GoRoute(
         path: '/owners/:ownerId',
@@ -93,16 +120,25 @@ class PetClinicApp extends StatelessWidget {
         },
       ),
       GoRoute(
-        path: AppRoutes.petTypes,
-        builder: (context, state) => const PetTypeListScreen(),
+        path: '/vets/:vetId/edit',
+        builder: (context, state) {
+          final vetId = int.parse(state.pathParameters['vetId']!);
+          return VetFormScreen(vetId: vetId);
+        },
       ),
       GoRoute(
-        path: AppRoutes.veterinarians,
-        builder: (context, state) => const VetListScreen(),
+        path: '/pet-types/:petTypeId/edit',
+        builder: (context, state) {
+          final petTypeId = int.parse(state.pathParameters['petTypeId']!);
+          return PetTypeFormScreen(petTypeId: petTypeId);
+        },
       ),
       GoRoute(
-        path: AppRoutes.specialties,
-        builder: (context, state) => const SpecialtyListScreen(),
+        path: '/specialties/:specialtyId/edit',
+        builder: (context, state) {
+          final specialtyId = int.parse(state.pathParameters['specialtyId']!);
+          return SpecialtyFormScreen(specialtyId: specialtyId);
+        },
       ),
     ],
   );
