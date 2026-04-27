@@ -17,6 +17,8 @@
 import 'package:flutter/material.dart';
 
 import '../../shared/forms/app_validators.dart';
+import '../../shared/navigation/app_routes.dart';
+import '../../shared/navigation/navigation_extensions.dart';
 import '../../shared/utils/date_utils.dart';
 import '../../shared/widgets/page_width.dart';
 import '../owners/owner.dart';
@@ -56,6 +58,10 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
   DateTime? _selectedDate;
 
   bool get _isEditing => widget.visitId != null;
+  String get _fallbackRoute {
+    final ownerId = _owner?.id;
+    return ownerId == null ? AppRoutes.owners : AppRoutes.owner(ownerId);
+  }
 
   @override
   void initState() {
@@ -170,7 +176,7 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
       if (!mounted) {
         return;
       }
-      Navigator.of(context).pop(true);
+      context.popOrGo<bool>(_fallbackRoute, result: true);
     } catch (error) {
       if (!mounted) {
         return;

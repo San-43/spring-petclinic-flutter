@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../shared/navigation/app_routes.dart';
+import '../../shared/navigation/navigation_extensions.dart';
 import '../../shared/theme/classic_theme.dart';
 import '../../shared/widgets/classic_scaffold.dart';
 import '../../shared/widgets/confirmation_dialog.dart';
@@ -133,7 +134,7 @@ class _OwnerDetailScreenState extends State<OwnerDetailScreen> {
       messenger.showSnackBar(
         SnackBar(content: Text('${owner.fullName} deleted.')),
       );
-      Navigator.of(context).pop(true);
+      context.popOrGo<bool>(AppRoutes.owners, result: true);
     } catch (error) {
       if (!mounted) {
         return;
@@ -274,7 +275,7 @@ class _OwnerDetailScreenState extends State<OwnerDetailScreen> {
                     children: [
                       FilledButton(
                         style: ClassicPalette.backButtonStyle(),
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () => context.popOrGo(AppRoutes.owners),
                         child: const Text('Back'),
                       ),
                       FilledButton(

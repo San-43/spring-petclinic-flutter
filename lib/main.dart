@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:spring_petclinic_flutter/features/owners/owner_detail_screen.dart';
 import 'package:spring_petclinic_flutter/features/owners/owner_form_screen.dart';
@@ -33,6 +34,7 @@ import 'shared/navigation/app_routes.dart';
 import 'shared/theme/classic_theme.dart';
 
 void main() {
+  usePathUrlStrategy();
   runApp(const PetClinicApp());
 }
 

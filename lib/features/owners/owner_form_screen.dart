@@ -17,6 +17,8 @@
 import 'package:flutter/material.dart';
 
 import '../../shared/forms/app_validators.dart';
+import '../../shared/navigation/app_routes.dart';
+import '../../shared/navigation/navigation_extensions.dart';
 import '../../shared/widgets/page_width.dart';
 import 'owner.dart';
 import 'owner_service.dart';
@@ -49,6 +51,10 @@ class _OwnerFormScreenState extends State<OwnerFormScreen> {
 
   Owner? get _currentOwner => widget.owner ?? _loadedOwner;
   bool get _isEditing => widget.owner != null || widget.ownerId != null;
+  String get _fallbackRoute {
+    final ownerId = _currentOwner?.id ?? widget.ownerId;
+    return ownerId == null ? AppRoutes.owners : AppRoutes.owner(ownerId);
+  }
 
   @override
   void initState() {
@@ -146,7 +152,7 @@ class _OwnerFormScreenState extends State<OwnerFormScreen> {
       if (!mounted) {
         return;
       }
-      Navigator.of(context).pop(true);
+      context.popOrGo<bool>(_fallbackRoute, result: true);
     } catch (error) {
       if (!mounted) {
         return;

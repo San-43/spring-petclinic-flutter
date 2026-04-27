@@ -17,6 +17,8 @@
 import 'package:flutter/material.dart';
 
 import '../../shared/forms/app_validators.dart';
+import '../../shared/navigation/app_routes.dart';
+import '../../shared/navigation/navigation_extensions.dart';
 import '../../shared/utils/date_utils.dart';
 import '../../shared/widgets/page_width.dart';
 import '../owners/owner.dart';
@@ -57,6 +59,10 @@ class _PetFormScreenState extends State<PetFormScreen> {
   DateTime? _selectedBirthDate;
 
   bool get _isEditing => widget.petId != null;
+  String get _fallbackRoute {
+    final ownerId = _owner?.id ?? widget.ownerId;
+    return ownerId == null ? AppRoutes.owners : AppRoutes.owner(ownerId);
+  }
 
   @override
   void initState() {
@@ -181,7 +187,7 @@ class _PetFormScreenState extends State<PetFormScreen> {
       if (!mounted) {
         return;
       }
-      Navigator.of(context).pop(true);
+      context.popOrGo<bool>(_fallbackRoute, result: true);
     } catch (error) {
       if (!mounted) {
         return;

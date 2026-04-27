@@ -17,6 +17,8 @@
 import 'package:flutter/material.dart';
 
 import '../../shared/forms/app_validators.dart';
+import '../../shared/navigation/app_routes.dart';
+import '../../shared/navigation/navigation_extensions.dart';
 import '../../shared/widgets/page_width.dart';
 import 'pet_type.dart';
 import 'pet_type_service.dart';
@@ -116,7 +118,7 @@ class _PetTypeFormScreenState extends State<PetTypeFormScreen> {
       if (!mounted) {
         return;
       }
-      Navigator.of(context).pop(true);
+      context.popOrGo<bool>(AppRoutes.petTypes, result: true);
     } catch (error) {
       if (!mounted) {
         return;

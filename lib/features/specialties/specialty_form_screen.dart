@@ -17,6 +17,8 @@
 import 'package:flutter/material.dart';
 
 import '../../shared/forms/app_validators.dart';
+import '../../shared/navigation/app_routes.dart';
+import '../../shared/navigation/navigation_extensions.dart';
 import '../../shared/widgets/page_width.dart';
 import 'specialty.dart';
 import 'specialty_service.dart';
@@ -118,7 +120,7 @@ class _SpecialtyFormScreenState extends State<SpecialtyFormScreen> {
       if (!mounted) {
         return;
       }
-      Navigator.of(context).pop(true);
+      context.popOrGo<bool>(AppRoutes.specialties, result: true);
     } catch (error) {
       if (!mounted) {
         return;

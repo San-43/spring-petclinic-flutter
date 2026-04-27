@@ -17,6 +17,8 @@
 import 'package:flutter/material.dart';
 
 import '../../shared/forms/app_validators.dart';
+import '../../shared/navigation/app_routes.dart';
+import '../../shared/navigation/navigation_extensions.dart';
 import '../../shared/widgets/page_width.dart';
 import '../specialties/specialty.dart';
 import '../specialties/specialty_service.dart';
@@ -153,7 +155,7 @@ class _VetFormScreenState extends State<VetFormScreen> {
       if (!mounted) {
         return;
       }
-      Navigator.of(context).pop(true);
+      context.popOrGo<bool>(AppRoutes.veterinarians, result: true);
     } catch (error) {
       if (!mounted) {
         return;
