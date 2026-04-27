@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../shared/navigation/app_routes.dart';
 import '../../shared/theme/classic_theme.dart';
 import '../../shared/widgets/classic_scaffold.dart';
 import '../../shared/widgets/confirmation_dialog.dart';
 import '../pets/pet.dart';
-import '../pets/pet_form_screen.dart';
 import '../pets/pet_service.dart';
 import '../visits/visit.dart';
-import '../visits/visit_form_screen.dart';
 import '../visits/visit_service.dart';
 import 'owner.dart';
-import 'owner_form_screen.dart';
 import 'owner_service.dart';
 
 class OwnerDetailScreen extends StatefulWidget {
@@ -89,10 +89,7 @@ class _OwnerDetailScreenState extends State<OwnerDetailScreen> {
       return;
     }
 
-    final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(builder: (_) => OwnerFormScreen(owner: _owner)),
-    );
-
+    final changed = await context.push<bool>(AppRoutes.ownerEdit(_owner!.id!));
     if (changed == true) {
       await _loadOwner();
     }
@@ -148,14 +145,9 @@ class _OwnerDetailScreenState extends State<OwnerDetailScreen> {
   }
 
   Future<void> _openPetForm({int? petId}) async {
-    final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        builder: (_) => PetFormScreen(
-          ownerId: petId == null ? _owner?.id : null,
-          petId: petId,
-        ),
-      ),
-    );
+    final changed = await (petId == null
+        ? context.push<bool>(AppRoutes.ownerPetNew(_owner!.id!))
+        : context.push<bool>(AppRoutes.petEdit(petId)));
 
     if (changed == true) {
       await _loadOwner();
@@ -163,11 +155,9 @@ class _OwnerDetailScreenState extends State<OwnerDetailScreen> {
   }
 
   Future<void> _openVisitForm({int? visitId, int? petId}) async {
-    final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        builder: (_) => VisitFormScreen(petId: petId, visitId: visitId),
-      ),
-    );
+    final changed = await (visitId == null
+        ? context.push<bool>(AppRoutes.petVisitNew(petId!))
+        : context.push<bool>(AppRoutes.visitEdit(visitId)));
 
     if (changed == true) {
       await _loadOwner();

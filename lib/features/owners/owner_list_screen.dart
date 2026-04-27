@@ -15,12 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:spring_petclinic_flutter/shared/navigation/app_routes.dart';
 
 import '../../shared/theme/classic_theme.dart';
 import '../../shared/widgets/classic_scaffold.dart';
 import 'owner.dart';
-import 'owner_detail_screen.dart';
-import 'owner_form_screen.dart';
 import 'owner_service.dart';
 
 class OwnerListScreen extends StatefulWidget {
@@ -87,20 +87,14 @@ class _OwnerListScreenState extends State<OwnerListScreen> {
   }
 
   Future<void> _openOwnerForm() async {
-    final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(builder: (_) => const OwnerFormScreen()),
-    );
+    final changed = await context.push<bool>(AppRoutes.ownerNew);
     if (changed == true) {
       await _loadOwners(lastName: _activeQuery);
     }
   }
 
   Future<void> _openOwnerDetail(Owner owner) async {
-    final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        builder: (_) => OwnerDetailScreen(ownerId: owner.id!),
-      ),
-    );
+    final changed = await context.push<bool>(AppRoutes.owner(owner.id!));
     if (changed == true) {
       await _loadOwners(lastName: _activeQuery);
     }

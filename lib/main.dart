@@ -16,12 +16,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:spring_petclinic_flutter/features/owners/owner_detail_screen.dart';
+import 'package:spring_petclinic_flutter/features/owners/owner_form_screen.dart';
 
 import 'features/home/home_screen.dart';
 import 'features/owners/owner_list_screen.dart';
+import 'features/pets/pet_form_screen.dart';
 import 'features/pettypes/pet_type_list_screen.dart';
 import 'features/specialties/specialty_list_screen.dart';
 import 'features/vets/vet_list_screen.dart';
+import 'features/visits/visit_form_screen.dart';
 import 'shared/navigation/app_routes.dart';
 import 'shared/theme/classic_theme.dart';
 
@@ -41,6 +45,52 @@ class PetClinicApp extends StatelessWidget {
       GoRoute(
         path: AppRoutes.owners,
         builder: (context, state) => const OwnerListScreen(),
+      ),
+      GoRoute(
+        path: '/owners/new',
+        builder: (context, state) => const OwnerFormScreen(),
+      ),
+      GoRoute(
+        path: '/owners/:ownerId',
+        builder: (context, state) {
+          final ownerId = int.parse(state.pathParameters['ownerId']!);
+          return OwnerDetailScreen(ownerId: ownerId);
+        },
+      ),
+      GoRoute(
+        path: '/owners/:ownerId/edit',
+        builder: (context, state) {
+          final ownerId = int.parse(state.pathParameters['ownerId']!);
+          return OwnerFormScreen(ownerId: ownerId);
+        },
+      ),
+      GoRoute(
+        path: '/owners/:ownerId/pets/new',
+        builder: (context, state) {
+          final ownerId = int.parse(state.pathParameters['ownerId']!);
+          return PetFormScreen(ownerId: ownerId);
+        },
+      ),
+      GoRoute(
+        path: '/pets/:petId/edit',
+        builder: (context, state) {
+          final petId = int.parse(state.pathParameters['petId']!);
+          return PetFormScreen(petId: petId);
+        },
+      ),
+      GoRoute(
+        path: '/pets/:petId/visits/new',
+        builder: (context, state) {
+          final petId = int.parse(state.pathParameters['petId']!);
+          return VisitFormScreen(petId: petId);
+        },
+      ),
+      GoRoute(
+        path: '/visits/:visitId/edit',
+        builder: (context, state) {
+          final visitId = int.parse(state.pathParameters['visitId']!);
+          return VisitFormScreen(visitId: visitId);
+        },
       ),
       GoRoute(
         path: AppRoutes.petTypes,

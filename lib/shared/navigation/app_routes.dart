@@ -20,4 +20,14 @@ class AppRoutes {
   static const veterinarians = '/vets';
   static const petTypes = '/pet-types';
   static const specialties = '/specialties';
+  static const ownerNew = '/owners/new';
+
+  static String owner(int ownerId) => '/owners/$ownerId';
+  static String ownerEdit(int ownerId) => '/owners/$ownerId/edit';
+  static String ownerPetNew(int ownerId) => '/owners/$ownerId/pets/new';
+
+  static String petEdit(int petId) => '/pets/$petId/edit';
+  static String petVisitNew(int petId) => '/pets/$petId/visits/new';
+
+  static String visitEdit(int visitId) => '/visits/$visitId/edit';
 }
