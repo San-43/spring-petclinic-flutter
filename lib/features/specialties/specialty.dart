@@ -15,10 +15,7 @@
  */
 
 class Specialty {
-  const Specialty({
-    this.id,
-    required this.name,
-  });
+  const Specialty({this.id, required this.name});
 
   final int? id;
   final String name;
@@ -31,16 +28,11 @@ class Specialty {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      if (id != null) 'id': id,
-      'name': name,
-    };
+    return {if (id != null) 'id': id, 'name': name};
   }
 
   Map<String, dynamic> toWriteJson() {
-    return {
-      'name': name,
-    };
+    return {'name': name};
   }
 
   @override

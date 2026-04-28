@@ -29,10 +29,9 @@ class PetService {
   }
 
   Future<Pet> createPet(int ownerId, Pet pet) async {
-    final data = await _apiClient.postJson(
-      'owners/$ownerId/pets',
-      pet.toWriteJson(),
-    ) as Map<String, dynamic>;
+    final data =
+        await _apiClient.postJson('owners/$ownerId/pets', pet.toWriteJson())
+            as Map<String, dynamic>;
     return Pet.fromJson(data);
   }
 

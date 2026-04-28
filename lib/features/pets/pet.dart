@@ -48,10 +48,6 @@ class Pet {
   }
 
   Map<String, dynamic> toWriteJson() {
-    return {
-      'name': name,
-      'birthDate': birthDate,
-      'type': type.toJson(),
-    };
+    return {'name': name, 'birthDate': birthDate, 'type': type.toJson()};
   }
 }

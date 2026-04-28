@@ -37,9 +37,6 @@ class Visit {
   }
 
   Map<String, dynamic> toWriteJson() {
-    return {
-      'date': date,
-      'description': description,
-    };
+    return {'date': date, 'description': description};
   }
 }

@@ -29,10 +29,12 @@ class VisitService {
   }
 
   Future<Visit> createVisit(int ownerId, int petId, Visit visit) async {
-    final data = await _apiClient.postJson(
-      'owners/$ownerId/pets/$petId/visits',
-      visit.toWriteJson(),
-    ) as Map<String, dynamic>;
+    final data =
+        await _apiClient.postJson(
+              'owners/$ownerId/pets/$petId/visits',
+              visit.toWriteJson(),
+            )
+            as Map<String, dynamic>;
     return Visit.fromJson(data);
   }
 

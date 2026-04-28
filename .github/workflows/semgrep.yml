@@ -1,0 +1,28 @@
+name: Semgrep
+
+on:
+  pull_request:
+    branches: [ "master" ]
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+  schedule:
+    - cron: "19 9 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  semgrep:
+    name: Semgrep CE advisory scan
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep:1.145.0
+    if: github.actor != 'dependabot[bot]'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Semgrep CE
+        continue-on-error: true
+        run: semgrep scan --config auto --metrics=off .

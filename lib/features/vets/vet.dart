@@ -46,7 +46,9 @@ class Vet {
     return {
       'firstName': firstName,
       'lastName': lastName,
-      'specialties': specialties.map((specialty) => specialty.toJson()).toList(),
+      'specialties': specialties
+          .map((specialty) => specialty.toJson())
+          .toList(),
     };
   }
 }
